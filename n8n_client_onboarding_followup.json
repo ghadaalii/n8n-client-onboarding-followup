@@ -1,0 +1,583 @@
+{
+  "name": "Client Onboarding",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d3b07af-ac1c-406e-8372-30d296fe3325",
+              "name": "Name",
+              "value": "={{ ($json.question_R8gErv.value || '').trim().toLowerCase().split(/\\s+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') }}",
+              "type": "string"
+            },
+            {
+              "id": "d9d4be19-720c-4788-bacb-4f80bc5f820d",
+              "name": "Email",
+              "value": "={{ $json.question_4Pq55o.value }}",
+              "type": "string"
+            },
+            {
+              "id": "22468a81-fb08-4c3b-ae08-f759a5c9559b",
+              "name": "Phone",
+              "value": "={{ String($json.question_jGpNN9.value ?? '').replace(/^\\+/, '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b8692af3-9cb8-4498-b4a2-304818a097c7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_GOOGLE_SHEET_ID",
+          "mode": "id",
+          "cachedResultName": "Client Onboarding Database"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Email": "={{ $json.Email }}",
+            "Phone": "={{ $json.Phone }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Welcome Email",
+              "displayName": "Welcome Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Follow-up Date",
+              "displayName": "Follow-up Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Follow-up Sent",
+              "displayName": "Follow-up Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        0
+      ],
+      "id": "fcdea02c-b3e4-49e2-864e-c9a727d8b5bd",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Welcome to Data Analytics Academy!",
+        "message": "= <html> <body style=\"margin:0;padding:24px;background-color:#f3f6fb;font-family:Arial,sans-serif;\">    <table role=\"presentation\" style=\"width:100%;max-width:600px;margin:auto;background:#ffffff;border-collapse:collapse;border-radius:12px;overflow:hidden;\">      <tr>       <td style=\"background:#182b4d;padding:30px;color:#ffffff;\">          <p style=\"font-size:12px;letter-spacing:2px;color:#b8c7e5;margin:0;\">           DATA ANALYTICS ACADEMY         </p>          <h1 style=\"font-size:26px;margin:16px 0 12px;\">           Welcome, {{ $('Edit Fields').item.json.Name }}!         </h1>          <p style=\"font-size:14px;color:#d5e0f1;margin:0;\">           We're happy to have you here.         </p>        </td>     </tr>      <tr>       <td style=\"padding:30px;color:#334155;font-size:15px;line-height:1.8;\">          <p>           Thank you for joining our early access list!         </p>          <p>           We're excited about your interest in our Data Analytics programs.           Our team will be in touch with you soon.         </p>          <p>           In the meantime, feel free to reply to this email if you have           any questions.         </p>          <p style=\"margin-top:25px;\">           Best regards,<br>           <strong>Data Analytics Academy Team</strong>         </p>        </td>     </tr>    </table>  </body> </html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "f98ca4c4-28b9-472f-ac08-31d42f6f85e1",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_GOOGLE_SHEET_ID",
+          "mode": "id",
+          "cachedResultName": "Client Onboarding Database"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Edit Fields').item.json.Email }}",
+            "Welcome Email": "1",
+            "Follow-up Date": "={{ $now.plus({ days: 3 }).toFormat('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Welcome Email",
+              "displayName": "Welcome Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Follow-up Date",
+              "displayName": "Follow-up Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Follow-up Sent",
+              "displayName": "Follow-up Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        0
+      ],
+      "id": "0d75f98f-8d8c-407b-9d78-65f189372a07",
+      "name": "Update row in sheet"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        32,
+        288
+      ],
+      "id": "1254e9b7-a9ce-485a-866d-69c2fdd18e7a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_GOOGLE_SHEET_ID",
+          "mode": "id",
+          "cachedResultName": "Client Onboarding Database"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Follow-up Date",
+              "lookupValue": "={{ $now.toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        288
+      ],
+      "id": "0e3174c0-747a-4d4d-8e83-1e7a0307ff2d",
+      "name": "Get row(s) in sheet"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "1d8eb2a1-fb0e-4d25-aca7-9516326da0a2",
+              "leftValue": "={{ String($json[\"Follow-up Sent\"] ?? \"\").trim() }}",
+              "rightValue": "1",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        480,
+        288
+      ],
+      "id": "6c1685cc-3c84-4ef4-8657-8085bf576bec",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Just Checking In — Data Analytics Academy",
+        "message": "= <html> <body style=\"margin:0;padding:24px;background-color:#f3f6fb;font-family:Arial,sans-serif;\">    <table role=\"presentation\"          style=\"width:100%;max-width:600px;margin:auto;background:#ffffff;border-collapse:collapse;border-radius:12px;overflow:hidden;\">      <tr>       <td style=\"background:#182b4d;padding:30px;color:#ffffff;\">          <p style=\"font-size:12px;letter-spacing:2px;color:#b8c7e5;margin:0;\">           DATA ANALYTICS ACADEMY         </p>          <h1 style=\"font-size:26px;margin:16px 0 12px;\">           Hi {{ $json.Name }}!         </h1>          <p style=\"font-size:14px;color:#d5e0f1;margin:0;\">           Just checking in with you.         </p>        </td>     </tr>      <tr>       <td style=\"padding:30px;color:#334155;font-size:15px;line-height:1.8;\">          <p>           It's been a few days since you joined our early access list,           and we wanted to follow up.         </p>          <p>           Do you have any questions about our Data Analytics programs?           We'd be happy to help you get started.         </p>          <p>           Feel free to reply to this email anytime.         </p>          <p style=\"margin-top:25px;\">           Best regards,<br>           <strong>Data Analytics Academy Team</strong>         </p>        </td>     </tr>    </table>  </body> </html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        192
+      ],
+      "id": "b99b0e59-acc4-463a-ac2f-d6633303d6ca",
+      "name": "Send a message1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_GOOGLE_SHEET_ID",
+          "mode": "id",
+          "cachedResultName": "Client Onboarding Database"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('If').item.json.Email }}",
+            "Follow-up Sent": "={{ 1 }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Welcome Email",
+              "displayName": "Welcome Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Follow-up Date",
+              "displayName": "Follow-up Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Follow-up Sent",
+              "displayName": "Follow-up Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        192
+      ],
+      "id": "60f88643-f003-41b5-8aea-3199e649654e",
+      "name": "Update row in sheet1"
+    },
+    {
+      "parameters": {
+        "formId": "REPLACE_WITH_YOUR_TALLY_FORM_ID"
+      },
+      "type": "n8n-nodes-tallyforms.tallyTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "57843316-c4c7-4e1b-850a-5a5480bf2edf",
+      "name": "Tally Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tally Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": [],
+  "tags": []
+}

@@ -1,83 +1,79 @@
-# Client Onboarding & Automated Follow-up System
+# Client Onboarding & Automated Follow-up (n8n)
 
-An automated client onboarding and follow-up solution built using **n8n, Tally, Google Sheets, and Gmail**.
+A two-branch automation that captures registrations from a Tally form, sends a styled HTML welcome email, and schedules a personalized follow-up three days later.
 
-The workflow captures new leads, standardizes their information, sends personalized HTML welcome emails, and automatically follows up with clients after three days.
+## Workflow overview
 
-## Overview
+**Onboarding:** Tally Trigger → Edit Fields → Google Sheets (Append Row) → Gmail (Welcome Email) → Google Sheets (Update Row)
 
-The project consists of two automated processes within a single n8n workflow.
+**Follow-up:** Schedule Trigger (daily, 10:00 AM) → Google Sheets (Get Rows matching today's date) → IF (`Follow-up Sent` ≠ `1`) → Gmail (Follow-up Email) → Google Sheets (Update Row)
 
-### 1. Client Onboarding
+## Screenshots
 
-When a user submits the Tally form:
+### Tally Registration Form
 
-1. **Tally Trigger** receives the new submission.
-2. **Edit Fields** formats the client's name and removes the leading `+` from the phone number.
-3. **Google Sheets** stores the client's information.
-4. **Gmail** sends a personalized HTML welcome email.
-5. **Google Sheets Update Row** marks the welcome email as sent and calculates the follow-up date.
+The registration form collects the client's name, email address, and phone number.
 
-### 2. Automated Follow-up
+![Tally Registration Form](screenshots/tally-form.png)
 
-A scheduled workflow runs daily at 10:00 AM (Africa/Cairo).
+### n8n Workflow Overview
 
-1. **Schedule Trigger** starts the process.
-2. **Google Sheets** retrieves records with a follow-up date matching the current date.
-3. **IF Node** checks whether the follow-up email has already been sent.
-4. **Gmail** sends a personalized HTML follow-up email to eligible clients.
-5. **Google Sheets Update Row** marks the follow-up as sent to prevent duplicate emails.
+Both onboarding and scheduled follow-up branches in a single n8n workflow.
 
-## Technologies Used
+![n8n Workflow Overview](screenshots/n8n-workflow-overview.png)
 
-| Technology | Purpose |
-|---|---|
-| n8n | Workflow automation |
-| Tally | Client registration form |
-| Google Sheets | Client database and tracking |
-| Gmail | Personalized HTML email delivery |
-| JavaScript Expressions | Data formatting, date calculations, and conditions |
+### Google Sheets Database
 
-## Google Sheets Structure
+Client records, welcome-email status, follow-up date, and follow-up status.
+
+![Google Sheets Database](screenshots/google-sheets-database.png)
+
+### HTML Welcome Email
+
+A personalized HTML welcome message sent after a new registration.
+
+![Welcome Email](screenshots/welcome-email.png)
+
+### HTML Follow-up Email
+
+A personalized message sent to eligible clients on the scheduled follow-up date.
+
+![Follow-up Email](screenshots/follow-up-email.png)
+
+## Features
+
+- Capitalizes the first letter of each word in the client's name
+- Removes a leading `+` from phone numbers
+- Stores registrations in Google Sheets
+- Sends responsive, personalized HTML emails
+- Calculates a follow-up date three days after registration
+- Tracks email delivery steps with `Welcome Email` and `Follow-up Sent` markers
+
+## Google Sheets schema
+
+Create a sheet with exactly these headers:
 
 | Name | Email | Phone | Welcome Email | Follow-up Date | Follow-up Sent |
 |---|---|---|---|---|---|
-| Sara Ahmed | sara@example.com | 201000000000 | 1 | 2026-11-20 | 0 |
 
-**Tracking fields:**
+The follow-up date uses `yyyy-MM-dd` formatting. A `1` marker represents an email that was sent by the automation.
 
-- `Welcome Email = 1`: Welcome email successfully sent.
-- `Follow-up Date`: Scheduled date, three days after registration.
-- `Follow-up Sent = 1`: Follow-up email sent.
-- An empty or `0` follow-up status indicates that the follow-up is pending.
+## Setup
 
-## Workflow Features
+1. Import [`n8n_client_onboarding_followup.json`](n8n_client_onboarding_followup.json) into n8n.
+2. Install the **Tally Trigger community node** (`n8n-nodes-tallyforms`) if your n8n instance does not already provide it. Community node support depends on your hosting environment.
+3. Set your Tally form ID and reconnect the Tally credential in the trigger.
+4. Configure your Google Sheet document ID in **all** Google Sheets nodes, select the appropriate sheet, and reconnect Google Sheets credentials.
+5. Reconnect Gmail credentials in both email nodes.
+6. Confirm the Tally question keys in **Edit Fields** match your actual form. The sample uses keys from the author's form, which will differ for another form.
+7. Set the n8n workflow timezone to **Africa/Cairo** (or your intended local timezone).
+8. Test both branches before publishing. Once tested, publish/activate the workflow.
 
-- Automated lead capture
-- Name capitalization and phone number formatting
-- Personalized HTML email templates
-- Dynamic follow-up date calculation
-- Daily scheduled execution
-- Conditional email sending
-- Follow-up status tracking in Google Sheets
+## Test the workflow
 
-## How to Use
+- Submit the form using a **unique test email address** you control, and confirm the welcome email arrives.
+- Verify a row was created and the welcome status/date were updated.
+- Set the follow-up date of a test row to today's date and leave `Follow-up Sent` empty or `0`.
+- Execute the scheduled branch manually; verify the follow-up email arrives and `Follow-up Sent` becomes `1`.
+- Rerun the check and verify that the IF node prevents a duplicate follow-up.
 
-1. Download `n8n_client_onboarding_followup.json`.
-2. Import the file into n8n.
-3. Configure your Tally, Google Sheets, and Gmail credentials.
-4. Select your Tally form and Google Sheets document.
-5. Ensure the sheet contains the required column headers.
-6. Configure the workflow timezone to `Africa/Cairo` or your preferred timezone.
-7. Test both workflow branches before publishing.
-8. Publish the workflow to enable automatic execution.
-
-**Note:** The repository contains a sanitized workflow template. Connection details must be configured after importing. Email-based row matching assumes unique email addresses.
-
-## Learning Outcomes
-
-This project helped me gain hands-on experience with event-driven automation, scheduled workflows, data transformation, Google Sheets integration, HTML email generation, and conditional execution using n8n.
-
-## Project Status
-
-Developed and tested as a hands-on automation project. The shared workflow requires configuration and testing in the destination environment.
